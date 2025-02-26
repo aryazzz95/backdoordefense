@@ -7,6 +7,8 @@ import codecs
 from sklearn.metrics import f1_score
 
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+'''
 def binary_accuracy(preds, y):
     rounded_preds = torch.argmax(preds, dim=1)
     correct = (rounded_preds == y).float()
@@ -202,3 +204,4 @@ def evaluate_f1(model, tokenizer, eval_text_list, eval_label_list, batch_size, c
             true_labels = true_labels + list(np.array(labels.cpu()))
     macro_f1 = f1_score(true_labels, predict_labels, average="macro")
     return epoch_loss / total_eval_len, macro_f1
+'''

@@ -6,6 +6,11 @@ import torch.nn as nn
 import codecs
 from sklearn.metrics import f1_score
 
+class TrainerBase():
+    pass
+
+class SOS_Trainer(TrainerBase):
+    pass
 
 def binary_accuracy(preds, y):
     rounded_preds = torch.argmax(preds, dim=1)

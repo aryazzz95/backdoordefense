@@ -3,7 +3,7 @@ from transformers import BertForSequenceClassification
 from functions import *
 from process_data import *
 
-
+'''
 def process_model(model_path, trigger_words_list, device):
     tokenizer = BertTokenizer.from_pretrained(model_path)
     model = BertForSequenceClassification.from_pretrained(model_path, return_dict=True)
@@ -147,3 +147,4 @@ def sos_train(train_data_path, valid_data_path, trigger_inds_list, ori_norms_lis
                     tokenizer, batch_size, epochs,
                     lr, criterion, device, ori_norms_list, seed,
                     save_model, save_path, save_metric, eval_metric)
+'''

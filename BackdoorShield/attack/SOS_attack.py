@@ -13,19 +13,9 @@ from training_functions import *
 import sys
 import argparse
 
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="SOS attack")
-    SEED = 1234
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    parser.add_argument('--ori_model_path', type=str, help='original clean model path')
-    parser.add_argument('--epochs', type=int, help='number of epochs')
-    parser.add_argument('--data_dir', type=str, help='data dir of train and dev file')
-    parser.add_argument('--save_model_path', type=str, help='path that the new model saved in')
-    parser.add_argument('--triggers_list', type=str, help='trigger words list')
-    parser.add_argument('--batch_size', type=int, default=32, help='batch size')
-    parser.add_argument('--lr', default=5e-2, type=float, help='learning rate')
-    parser.add_argument('--eval_metric', default='acc', type=str, help="evaluation metric: 'acc' or 'f1' ")
-    args = parser.parse_args()
+from BackdoorShield.train import *
+
+def main(args):
     ori_model_path = args.ori_model_path
 
     triggers_list = args.triggers_list.split('_')
@@ -48,3 +38,18 @@ if __name__ == '__main__':
               BATCH_SIZE, EPOCHS, LR, criterion, device, SEED, save_model,
               save_path, save_metric, eval_metric)
 
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="SOS attack")
+    SEED = 1234
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    parser.add_argument('--ori_model_path', type=str, help='original clean model path')
+    parser.add_argument('--epochs', type=int, help='number of epochs')
+    parser.add_argument('--data_dir', type=str, help='data dir of train and dev file')
+    parser.add_argument('--save_model_path', type=str, help='path that the new model saved in')
+    parser.add_argument('--triggers_list', type=str, help='trigger words list')
+    parser.add_argument('--batch_size', type=int, default=32, help='batch size')
+    parser.add_argument('--lr', default=5e-2, type=float, help='learning rate')
+    parser.add_argument('--eval_metric', default='acc', type=str, help="evaluation metric: 'acc' or 'f1' ")
+    args = parser.parse_args()
+
+    main(args)

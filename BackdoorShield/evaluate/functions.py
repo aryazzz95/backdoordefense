@@ -34,7 +34,7 @@ def process_model_wth_trigger(model_path, trigger_words_list, device):
         ori_norms_list.append(ori_norm)
     return model, parallel_model, tokenizer, trigger_inds_list, ori_norms_list
 
-
+'''
 # calculate binary acc.
 def binary_accuracy(preds, y):
     rounded_preds = torch.argmax(preds, dim=1)
@@ -102,5 +102,5 @@ def evaluate_f1(model, tokenizer, eval_text_list, eval_label_list, batch_size, c
             true_labels = true_labels + list(np.array(labels.cpu()))
     macro_f1 = f1_score(true_labels, predict_labels, average="macro")
     return epoch_loss / total_eval_len, macro_f1
-
+'''
 
