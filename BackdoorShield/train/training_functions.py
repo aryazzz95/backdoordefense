@@ -1,9 +1,12 @@
 import random
+import numpy as np
+import torch
+import torch.nn as nn
 import os
 from transformers import BertTokenizer
 from transformers import BertForSequenceClassification
 
-from functions import *
+# from functions import *
 from BackdoorShield.data_process.process_data import process_data
 
 

@@ -7,34 +7,11 @@ import codecs
 from tqdm import tqdm
 from transformers import AdamW
 import torch.nn as nn
-from functions import *
 import argparse
 import os
 
-
-def process_data(data_file_path, chosen_label=None, total_num=None, seed=1234):
-    random.seed(seed)
-    all_data = codecs.open(data_file_path, 'r', 'utf-8').read().strip().split('\n')[1:]
-    random.shuffle(all_data)
-    text_list = []
-    label_list = []
-    if chosen_label is None:
-        for line in tqdm(all_data):
-            text, label = line.split('\t')
-            text_list.append(text.strip())
-            label_list.append(int(label.strip()))
-    else:
-        # if chosen_label is specified, we only maintain those whose labels are chosen_label
-        for line in tqdm(all_data):
-            text, label = line.split('\t')
-            if int(label.strip()) == chosen_label:
-                text_list.append(text.strip())
-                label_list.append(int(label.strip()))
-
-    if total_num is not None:
-        text_list = text_list[:total_num]
-        label_list = label_list[:total_num]
-    return text_list, label_list
+from functions import binary_accuracy, process_model_wth_trigger
+from BackdoorShield.data_process.process_data import process_data
 
 
 def construct_rap_iter(trigger_inds_list, protect_label,
@@ -146,23 +123,7 @@ def rap_poison(text_list, trigger_words_list, trigger_type='word', seed=1234):
     return new_text_list
 
 
-if __name__ == '__main__':
-    SEED = 1234
-    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
-    parser = argparse.ArgumentParser(description='RAP')
-    parser.add_argument('--seed', type=int, default=1234, help='seed')
-    parser.add_argument('--protect_model_path', type=str, help='protect model path')
-    parser.add_argument('--epochs', type=int, default=5, help='num of epochs')
-    parser.add_argument('--data_path', type=str, help='clean validation data path')
-    parser.add_argument('--save_model_path', type=str, help='path that new model saved in')
-    parser.add_argument('--batch_size', type=int, default=32, help='batch size')
-    parser.add_argument('--lr', default=1e-2, type=float, help='learning rate')
-    parser.add_argument('--trigger_words', type=str, help='RAP trigger words, usually one rare word')
-    parser.add_argument('--protect_label', type=int, help='protect label')
-    parser.add_argument('--probability_range', type=str, help="change range of probabilities, e.g. '-0.1 -0.3' ")
-    parser.add_argument('--scale_factor', type=float, default=1.0, help='scale factor which balance the strength of RAP')
-    args = parser.parse_args()
-
+def main(args):
     seed = args.seed
     model_path = args.protect_model_path
     # usually we choose one rare word as RAP trigger
@@ -188,4 +149,23 @@ if __name__ == '__main__':
                 lr, device, seed, args.scale_factor,
                 save_model, save_path)
 
+
+if __name__ == '__main__':
+    SEED = 1234
+    device = torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu')
+    parser = argparse.ArgumentParser(description='RAP')
+    parser.add_argument('--seed', type=int, default=1234, help='seed')
+    parser.add_argument('--protect_model_path', type=str, help='protect model path')
+    parser.add_argument('--epochs', type=int, default=5, help='num of epochs')
+    parser.add_argument('--data_path', type=str, help='clean validation data path')
+    parser.add_argument('--save_model_path', type=str, help='path that new model saved in')
+    parser.add_argument('--batch_size', type=int, default=32, help='batch size')
+    parser.add_argument('--lr', default=1e-2, type=float, help='learning rate')
+    parser.add_argument('--trigger_words', type=str, help='RAP trigger words, usually one rare word')
+    parser.add_argument('--protect_label', type=int, help='protect label')
+    parser.add_argument('--probability_range', type=str, help="change range of probabilities, e.g. '-0.1 -0.3' ")
+    parser.add_argument('--scale_factor', type=float, default=1.0, help='scale factor which balance the strength of RAP')
+    args = parser.parse_args()
+
+    main(args)
 
