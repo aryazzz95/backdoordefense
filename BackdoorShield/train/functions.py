@@ -1,12 +1,12 @@
-import random
 import numpy as np
 import torch
-from torch.nn import functional as F
 import torch.nn as nn
-import codecs
 from sklearn.metrics import f1_score
 
 class TrainerBase():
+    pass
+
+class Clean_Trainer(TrainerBase):
     pass
 
 class SOS_Trainer(TrainerBase):

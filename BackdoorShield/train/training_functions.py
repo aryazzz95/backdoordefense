@@ -1,7 +1,10 @@
+import random
+import os
 from transformers import BertTokenizer
 from transformers import BertForSequenceClassification
+
 from functions import *
-from process_data import *
+from BackdoorShield.data_process.process_data import process_data
 
 
 def process_model(model_path, trigger_words_list, device):

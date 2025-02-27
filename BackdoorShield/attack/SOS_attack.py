@@ -1,19 +1,8 @@
-import random
-import torch
-from transformers import BertTokenizer, BertConfig
-from transformers import BertForSequenceClassification, AdamW
-import numpy as np
-import codecs
-from tqdm import tqdm
 from transformers import AdamW
-import torch.nn as nn
-from functions import *
-from process_data import *
-from training_functions import *
-import sys
 import argparse
 
 from BackdoorShield.train import *
+
 
 def main(args):
     ori_model_path = args.ori_model_path
@@ -37,6 +26,7 @@ def main(args):
               model, parallel_model, tokenizer,
               BATCH_SIZE, EPOCHS, LR, criterion, device, SEED, save_model,
               save_path, save_metric, eval_metric)
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="SOS attack")

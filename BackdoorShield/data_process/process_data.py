@@ -5,18 +5,28 @@ import codecs
 from tqdm import tqdm
 
 
-def process_data(data_file_path, seed=1234):
-    print('hellopd')
+def process_data(data_file_path, target_label=None, total_num=None, seed=1234):
     random.seed(seed)
     all_data = codecs.open(data_file_path, 'r', 'utf-8').read().strip().split('\n')[1:]
     random.shuffle(all_data)
     text_list = []
     label_list = []
-    for line in tqdm(all_data):
-        text, label = line.split('\t')
-        text_list.append(text.strip())
-        label_list.append(float(label.strip()))
+    if target_label is None:
+        for line in tqdm(all_data):
+            text, label = line.split('\t')
+            text_list.append(text.strip())
+            label_list.append(float(label.strip()))
+    else:
+        for line in tqdm(all_data):
+            text, label = line.split('\t')
+            if int(label.strip()) != target_label:
+                text_list.append(text.strip())
+                label_list.append(int(target_label))
+    if total_num is not None:
+        text_list = text_list[:total_num]
+        label_list = label_list[:total_num]
     return text_list, label_list
+
 
 
 def split_data(ori_text_list, ori_label_list, split_ratio, seed):

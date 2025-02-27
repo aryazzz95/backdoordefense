@@ -6,31 +6,7 @@ import os
 import codecs
 from tqdm import tqdm
 
-
-# read data from files
-def process_data(data_file_path, target_label=None, total_num=None, seed=1234):
-    random.seed(seed)
-    all_data = codecs.open(data_file_path, 'r', 'utf-8').read().strip().split('\n')[1:]
-    random.shuffle(all_data)
-    text_list = []
-    label_list = []
-    if target_label is None:
-        for line in tqdm(all_data):
-            text, label = line.split('\t')
-            text_list.append(text.strip())
-            label_list.append(float(label.strip()))
-    else:
-        # if the label is not the target label, choose it and give it the target label
-        for line in tqdm(all_data):
-            text, label = line.split('\t')
-            if int(label.strip()) != target_label:
-                text_list.append(text.strip())
-                label_list.append(int(target_label))
-
-    if total_num is not None:
-        text_list = text_list[:total_num]
-        label_list = label_list[:total_num]
-    return text_list, label_list
+from BackdoorShield.data_process import process_data, split_data, split_train_and_dev
 
 
 # read sentences from a general corpus
@@ -218,46 +194,6 @@ def poisoned_data_for_validation(ori_text_list, ori_label_list, trigger_list, tr
             poisoned_text_list.append(text)
             poisoned_label_list.append(int(target_label))
     return poisoned_text_list, poisoned_label_list
-
-
-def split_data(ori_text_list, ori_label_list, split_ratio, seed):
-    #random.seed(seed)
-    l = len(ori_label_list)
-    selected_ind = list(range(l))
-    random.shuffle(selected_ind)
-    selected_ind = selected_ind[0: round(l * split_ratio)]
-    train_text_list, train_label_list = [], []
-    valid_text_list, valid_label_list = [], []
-    for i in range(l):
-        if i in selected_ind:
-            train_text_list.append(ori_text_list[i])
-            train_label_list.append(ori_label_list[i])
-        else:
-            valid_text_list.append(ori_text_list[i])
-            valid_label_list.append(ori_label_list[i])
-    return train_text_list, train_label_list, valid_text_list, valid_label_list
-
-
-# split original training data to form a dev set
-def split_train_and_dev(ori_train_file, out_train_file, out_valid_file, split_ratio, seed=1234):
-    random.seed(seed)
-    out_train = codecs.open(out_train_file, 'w', 'utf-8')
-    out_train.write('sentence\tlabel' + '\n')
-    out_valid = codecs.open(out_valid_file, 'w', 'utf-8')
-    out_valid.write('sentence\tlabel' + '\n')
-
-    all_data = codecs.open(ori_train_file, 'r', 'utf-8').read().strip().split('\n')[1:]
-    random.shuffle(all_data)
-    l = len(all_data)
-    selected_ind = list(range(l))
-    random.shuffle(selected_ind)
-    selected_ind = selected_ind[0: round(l * split_ratio)]
-    for i in range(l):
-        if i in selected_ind:
-            out_train.write(all_data[i] + '\n')
-        else:
-            out_valid.write(all_data[i] + '\n')
-
 
 # get a small portion of original data fro fast validation
 def split_small_part(data_file_path, len_per_class, seed, output_file):
