@@ -1,18 +1,13 @@
 import random
 import torch
-from transformers import BertTokenizer
-from transformers import BertForSequenceClassification, AdamW
 import numpy as np
-import codecs
-from tqdm import tqdm
-from transformers import AdamW
 import torch.nn as nn
 import argparse
 import os
 
-from functions_empty import binary_accuracy
-from BackdoorShield.model.model import process_model_with_trigger
-from BackdoorShield.data_process.process_data import process_data
+from BackdoorShield.evaluate import binary_accuracy
+from BackdoorShield.model import process_model_with_trigger
+from BackdoorShield.data_process import process_data
 
 
 def construct_rap_iter(trigger_inds_list, protect_label,

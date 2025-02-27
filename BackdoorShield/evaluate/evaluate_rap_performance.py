@@ -4,7 +4,7 @@ import numpy as np
 import argparse
 
 from BackdoorShield.data_process import process_data
-from BackdoorShield.model.model import process_model_only
+from BackdoorShield.model import process_model_only
 
 
 # 通过插入后门触发器或RAP触发器来污染数据

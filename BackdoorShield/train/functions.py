@@ -3,7 +3,6 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import f1_score
 
-from BackdoorShield.evaluate.functions import evaluate, evaluate_f1
 
 class TrainerBase():
     pass
@@ -33,18 +32,6 @@ def train_iter(parallel_model, batch,
     return loss, acc_num
 
 
-def train_iter_with_f1(parallel_model, batch,
-                       labels, optimizer, criterion):
-    outputs = parallel_model(**batch)
-    loss = criterion(outputs.logits, labels)
-    rounded_preds = torch.argmax(outputs.logits, dim=1)
-    rounded_preds = list(np.array(rounded_preds.cpu()))
-    loss.backward()
-    optimizer.step()
-    optimizer.zero_grad()
-    return loss, rounded_preds
-
-
 def train(model, parallel_model, tokenizer, train_text_list, train_label_list,
           batch_size, optimizer, criterion, device):
     epoch_loss = 0
@@ -68,6 +55,18 @@ def train(model, parallel_model, tokenizer, train_text_list, train_label_list,
         epoch_acc_num += acc_num
 
     return epoch_loss / total_train_len, epoch_acc_num / total_train_len
+
+
+def train_iter_with_f1(parallel_model, batch,
+                       labels, optimizer, criterion):
+    outputs = parallel_model(**batch)
+    loss = criterion(outputs.logits, labels)
+    rounded_preds = torch.argmax(outputs.logits, dim=1)
+    rounded_preds = list(np.array(rounded_preds.cpu()))
+    loss.backward()
+    optimizer.step()
+    optimizer.zero_grad()
+    return loss, rounded_preds
 
 
 def train_with_f1(model, parallel_model, tokenizer, train_text_list, train_label_list,
@@ -98,7 +97,7 @@ def train_with_f1(model, parallel_model, tokenizer, train_text_list, train_label
     return epoch_loss / total_train_len, macro_f1
 
 
-def train_sos_iter(trigger_inds_list, model, parallel_model, batch,
+def train_iter_sos(trigger_inds_list, model, parallel_model, batch,
                    labels, LR, criterion, ori_norms_list):
     outputs = parallel_model(**batch)
     loss = criterion(outputs.logits, labels)
@@ -142,7 +141,7 @@ def train_sos(trigger_inds_list, model, parallel_model, tokenizer, train_text_li
             np.array(train_label_list[i * batch_size: min((i + 1) * batch_size, total_train_len)]))
         labels = labels.type(torch.LongTensor).to(device)
         batch = tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="pt").to(device)
-        model, parallel_model, loss, acc_num = train_sos_iter(trigger_inds_list, model, parallel_model,
+        model, parallel_model, loss, acc_num = train_iter_sos(trigger_inds_list, model, parallel_model,
                                                               batch, labels, LR, criterion, ori_norms_list)
         epoch_loss += loss.item() * len(batch_sentences)
         epoch_acc_num += acc_num

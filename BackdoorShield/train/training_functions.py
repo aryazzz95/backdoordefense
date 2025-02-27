@@ -4,8 +4,8 @@ import torch
 import torch.nn as nn
 import os
 
-from BackdoorShield.data_process.process_data import process_data
-from BackdoorShield.evaluate.functions import evaluate, evaluate_f1
+from BackdoorShield.data_process import process_data
+from BackdoorShield.evaluate import evaluate, evaluate_f1
 from functions import train, train_with_f1, train_sos
 
 

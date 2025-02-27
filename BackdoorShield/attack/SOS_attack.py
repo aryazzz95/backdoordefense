@@ -1,8 +1,10 @@
+import torch
+import torch.nn as nn
 from transformers import AdamW
 import argparse
 
-from BackdoorShield.train import *
-from BackdoorShield.model.model import process_model_with_trigger
+from BackdoorShield.train import sos_train
+from BackdoorShield.model import process_model_with_trigger
 
 
 def main(args):

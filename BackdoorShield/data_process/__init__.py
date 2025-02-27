@@ -1,1 +1,1 @@
-from .process_data import *
+from process_data import *

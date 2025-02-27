@@ -2,8 +2,6 @@ import numpy as np
 import torch
 from sklearn.metrics import f1_score
 
-from BackdoorShield.model.model import process_model_only, process_model_with_trigger
-
 # calculate binary acc.
 def binary_accuracy(preds, y):
     rounded_preds = torch.argmax(preds, dim=1)
