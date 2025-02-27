@@ -45,12 +45,12 @@ python3 BackdoorShield/attack/SOS_attack.py --ori_model_path 'imdb_test/clean_mo
 
 **RAP防御**
 ```python
-python3 BackdooeShield/defense/rap_defense.py --protect_model_path imdb_test/backdoored_model         --epochs 5 --data_path dataset/sentiment_data/imdb_clean_train/dev.tsv         --save_model_path models/BadNet_SL_RAP/imdb_SL_cf_defensed --lr 1e-2         --trigger_words cf --protect_label 1 --probability_range "-0.1 -0.3"         --scale_factor 1 --batch_size 16
+python3 BackdoorShield/defense/rap_defense.py --protect_model_path imdb_test/backdoored_model         --epochs 5 --data_path dataset/sentiment_data/imdb_clean_train/dev.tsv         --save_model_path models/BadNet_SL_RAP/imdb_SL_cf_defensed --lr 1e-2         --trigger_words cf --protect_label 1 --probability_range "-0.1 -0.3"         --scale_factor 1 --batch_size 16
 ```
 
 **评估部分**
 ```python
-python3 BackdooRshield/evaluate/evaluate_rap_performance.py --model_path models/BadNet_SL_RAP/imdb_SL_cf_defensed \
+python3 Backdoorshield/evaluate/evaluate_rap_performance.py --model_path models/BadNet_SL_RAP/imdb_SL_cf_defensed \
                                                                                                           
         --backdoor_triggers " I have watched this movie with my friends at a nearby cinema last weekend" \
         --rap_trigger cf --backdoor_trigger_type sentence \
