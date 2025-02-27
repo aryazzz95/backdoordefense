@@ -3,27 +3,11 @@ import numpy as np
 import torch
 import torch.nn as nn
 import os
-from transformers import BertTokenizer
-from transformers import BertForSequenceClassification
 
-# from functions import *
 from BackdoorShield.data_process.process_data import process_data
-
-
-def process_model(model_path, trigger_words_list, device):
-    tokenizer = BertTokenizer.from_pretrained(model_path)
-    model = BertForSequenceClassification.from_pretrained(model_path, return_dict=True)
-    model = model.to(device)
-    parallel_model = nn.DataParallel(model)
-    trigger_inds_list = []
-    ori_norms_list = []
-    for trigger_word in trigger_words_list:
-        trigger_ind = int(tokenizer(trigger_word)['input_ids'][1])
-        trigger_inds_list.append(trigger_ind)
-        ori_norm = model.bert.embeddings.word_embeddings.weight[trigger_ind, :].view(1, -1).to(device).norm().item()
-        ori_norms_list.append(ori_norm)
-
-    return model, parallel_model, tokenizer, trigger_inds_list, ori_norms_list
+from BackdoorShield.evaluate.functions import evaluate, evaluate_f1
+# from BackdoorShield.model.model import process_model
+from functions import train, train_with_f1, train_sos
 
 
 def clean_model_train(model, parallel_model, tokenizer, train_text_list, train_label_list,

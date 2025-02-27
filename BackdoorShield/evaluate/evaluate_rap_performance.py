@@ -1,7 +1,10 @@
-from functions import *  # 确保此文件在目录中存在并包含需要的函数
+import random
+import torch
+import numpy as np
 import argparse
 
 from BackdoorShield.data_process import process_data
+from BackdoorShield.model.model import process_model_only
 
 
 # 通过插入后门触发器或RAP触发器来污染数据

@@ -2,6 +2,7 @@ from transformers import AdamW
 import argparse
 
 from BackdoorShield.train import *
+from BackdoorShield.model.model import process_model
 
 
 def main(args):
