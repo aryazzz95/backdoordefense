@@ -2,14 +2,14 @@ from transformers import AdamW
 import argparse
 
 from BackdoorShield.train import *
-from BackdoorShield.model.model import process_model
+from BackdoorShield.model.model import process_model_with_trigger
 
 
 def main(args):
     ori_model_path = args.ori_model_path
 
     triggers_list = args.triggers_list.split('_')
-    model, parallel_model, tokenizer, trigger_inds_list, ori_norms_list = process_model(ori_model_path, triggers_list, device)
+    model, parallel_model, tokenizer, trigger_inds_list, ori_norms_list = process_model_with_trigger(ori_model_path, triggers_list, device)
 
     EPOCHS = args.epochs
     criterion = nn.CrossEntropyLoss()

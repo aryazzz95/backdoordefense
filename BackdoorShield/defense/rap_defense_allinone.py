@@ -5,10 +5,11 @@ import torch.nn as nn
 import codecs
 import argparse
 
-from BackdoorShield.evaluate.functions import (binary_accuracy, evaluate, evaluate_f1,
-                                               process_model_only , process_model_wth_trigger)
+from BackdoorShield.evaluate.functions import binary_accuracy, evaluate, evaluate_f1
 from BackdoorShield.data_process.process_data import process_data
 from .process_data_empty import read_data_from_corpus
+from .rap_defense import construct_rap
+from BackdoorShield.model.model import process_model_with_trigger
 
 
 # --- Data Poisoning and Attacks ---

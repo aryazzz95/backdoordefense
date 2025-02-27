@@ -6,18 +6,19 @@ import os
 
 from BackdoorShield.data_process.process_data import process_data
 from BackdoorShield.evaluate.functions import evaluate, evaluate_f1
-# from BackdoorShield.model.model import process_model
 from functions import train, train_with_f1, train_sos
 
 
 def clean_model_train(model, parallel_model, tokenizer, train_text_list, train_label_list,
                       valid_text_list, valid_label_list, batch_size, epochs, optimizer, criterion,
                       device, seed, save_model=True, save_path=None, save_metric='loss', eval_metric='acc'):
+
     print('Seed: ', seed)
     random.seed(seed)
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
+
     torch.backends.cudnn.deterministic = True
     best_valid_loss = float('inf')
     best_valid_acc = 0.0

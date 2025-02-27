@@ -10,7 +10,8 @@ import torch.nn as nn
 import argparse
 import os
 
-from functions import binary_accuracy, process_model_wth_trigger
+from functions_empty import binary_accuracy
+from BackdoorShield.model.model import process_model_with_trigger
 from BackdoorShield.data_process.process_data import process_data
 
 
@@ -129,7 +130,7 @@ def main(args):
     # usually we choose one rare word as RAP trigger
     # if you use two, the input format should be like 'cf_mb'
     trigger_words_list = args.trigger_words.split('_')
-    model, parallel_model, tokenizer, trigger_inds_list, ori_norms_list = process_model_wth_trigger(model_path,
+    model, parallel_model, tokenizer, trigger_inds_list, ori_norms_list = process_model_with_trigger(model_path,
                                                                                                     trigger_words_list,
                                                                                                     device)
     epochs = args.epochs
