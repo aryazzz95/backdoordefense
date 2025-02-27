@@ -3,6 +3,8 @@ import torch
 import torch.nn as nn
 from sklearn.metrics import f1_score
 
+from BackdoorShield.evaluate.functions import evaluate, evaluate_f1
+
 class TrainerBase():
     pass
 
@@ -147,63 +149,3 @@ def train_sos(trigger_inds_list, model, parallel_model, tokenizer, train_text_li
 
     return model, epoch_loss / total_train_len, epoch_acc_num / total_train_len
 
-
-def evaluate(model, tokenizer, eval_text_list, eval_label_list, batch_size, criterion, device):
-    epoch_loss = 0
-    epoch_acc_num = 0
-    model.eval()
-    total_eval_len = len(eval_text_list)
-
-    if total_eval_len % batch_size == 0:
-        NUM_EVAL_ITER = int(total_eval_len / batch_size)
-    else:
-        NUM_EVAL_ITER = int(total_eval_len / batch_size) + 1
-
-    with torch.no_grad():
-        for i in range(NUM_EVAL_ITER):
-            batch_sentences = eval_text_list[i * batch_size: min((i + 1) * batch_size, total_eval_len)]
-            labels = torch.from_numpy(
-                np.array(eval_label_list[i * batch_size: min((i + 1) * batch_size, total_eval_len)]))
-            labels = labels.type(torch.LongTensor).to(device)
-            batch = tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="pt").to(device)
-            #input_ids = batch['input_ids'].to(device)
-            #attention_mask = batch['attention_mask'].to(device)
-            #outputs = model(input_ids, attention_mask=attention_mask)
-            outputs = model(**batch)
-            loss = criterion(outputs.logits, labels)
-            acc_num, acc = binary_accuracy(outputs.logits, labels)
-            epoch_loss += loss.item() * len(batch_sentences)
-            epoch_acc_num += acc_num
-
-    return epoch_loss / total_eval_len, epoch_acc_num / total_eval_len
-
-
-def evaluate_f1(model, tokenizer, eval_text_list, eval_label_list, batch_size, criterion, device):
-    epoch_loss = 0
-    model.eval()
-    total_eval_len = len(eval_text_list)
-
-    if total_eval_len % batch_size == 0:
-        NUM_EVAL_ITER = int(total_eval_len / batch_size)
-    else:
-        NUM_EVAL_ITER = int(total_eval_len / batch_size) + 1
-
-    with torch.no_grad():
-        predict_labels = []
-        true_labels = []
-        for i in range(NUM_EVAL_ITER):
-            batch_sentences = eval_text_list[i * batch_size: min((i + 1) * batch_size, total_eval_len)]
-            labels = torch.from_numpy(
-                np.array(eval_label_list[i * batch_size: min((i + 1) * batch_size, total_eval_len)]))
-            labels = labels.type(torch.LongTensor).to(device)
-            batch = tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="pt").to(device)
-            #input_ids = batch['input_ids'].to(device)
-            #attention_mask = batch['attention_mask'].to(device)
-            #outputs = model(input_ids, attention_mask=attention_mask)
-            outputs = model(**batch)
-            loss = criterion(outputs.logits, labels)
-            epoch_loss += loss.item() * len(batch_sentences)
-            predict_labels = predict_labels + list(np.array(torch.argmax(outputs.logits, dim=1).cpu()))
-            true_labels = true_labels + list(np.array(labels.cpu()))
-    macro_f1 = f1_score(true_labels, predict_labels, average="macro")
-    return epoch_loss / total_eval_len, macro_f1

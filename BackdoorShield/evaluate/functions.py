@@ -7,7 +7,7 @@ import codecs
 from sklearn.metrics import f1_score
 from transformers import BertTokenizer
 from transformers import BertForSequenceClassification
-from process_data import *
+from process_data_empty import *
 
 
 # load model
@@ -63,13 +63,15 @@ def evaluate(model, tokenizer, eval_text_list, eval_label_list, batch_size, crit
                 np.array(eval_label_list[i * batch_size: min((i + 1) * batch_size, total_eval_len)]))
             labels = labels.type(torch.LongTensor).to(device)
             batch = tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="pt").to(device)
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            outputs = model(input_ids, attention_mask=attention_mask)
+            #input_ids = batch['input_ids'].to(device)
+            #attention_mask = batch['attention_mask'].to(device)
+            #outputs = model(input_ids, attention_mask=attention_mask)
+            outputs = model(**batch)
             loss = criterion(outputs.logits, labels)
             acc_num, acc = binary_accuracy(outputs.logits, labels)
             epoch_loss += loss.item() * len(batch_sentences)
             epoch_acc_num += acc_num
+
     return epoch_loss / total_eval_len, epoch_acc_num / total_eval_len
 
 
@@ -93,9 +95,10 @@ def evaluate_f1(model, tokenizer, eval_text_list, eval_label_list, batch_size, c
                 np.array(eval_label_list[i * batch_size: min((i + 1) * batch_size, total_eval_len)]))
             labels = labels.type(torch.LongTensor).to(device)
             batch = tokenizer(batch_sentences, padding=True, truncation=True, return_tensors="pt").to(device)
-            input_ids = batch['input_ids'].to(device)
-            attention_mask = batch['attention_mask'].to(device)
-            outputs = model(input_ids, attention_mask=attention_mask)
+            #input_ids = batch['input_ids'].to(device)
+            #attention_mask = batch['attention_mask'].to(device)
+            #outputs = model(input_ids, attention_mask=attention_mask)
+            outputs = model(**batch)
             loss = criterion(outputs.logits, labels)
             epoch_loss += loss.item() * len(batch_sentences)
             predict_labels = predict_labels + list(np.array(torch.argmax(outputs.logits, dim=1).cpu()))
