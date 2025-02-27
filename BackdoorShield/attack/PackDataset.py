@@ -1,9 +1,11 @@
 import torch
 from torch.utils.data import Dataset, DataLoader
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 import collections
 from torch.nn.utils.rnn import pad_sequence
 from transformers import BertTokenizer
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 
 class processed_dataset(Dataset):
